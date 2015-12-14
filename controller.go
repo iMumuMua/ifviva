@@ -2,6 +2,7 @@ package ifviva
 
 import (
 	"encoding/json"
+	"html/template"
 	"net/http"
 )
 
@@ -9,6 +10,7 @@ const (
 	contentType    = "Content-Type"
 	contentText    = "text/plain"
 	contentJSON    = "application/json"
+	contentHTML    = "text/html"
 	defaultCharset = "UTF-8"
 )
 
@@ -48,6 +50,23 @@ func (ctrl *Controller) Json(v interface{}) {
 	ctrl.Res.Header().Set(contentType, appendCharset(contentJSON, ctrl.Charset))
 	ctrl.Res.WriteHeader(ctrl.statusCode)
 	ctrl.Res.Write(result)
+}
+
+func (ctrl *Controller) View(viewPath string, data interface{}) {
+	// readfile(viewPath)
+	tpl := `{{define "T"}}<h1>hello</h1><p>{{.}}</p>{{end}}`
+	t, err := template.New(viewPath).Parse(tpl)
+	if err != nil {
+		ctrl.InternalError(err)
+		return
+	}
+
+	ctrl.Res.Header().Set(contentType, appendCharset(contentHTML, ctrl.Charset))
+	ctrl.Res.WriteHeader(ctrl.statusCode)
+	err = t.ExecuteTemplate(ctrl.Res, "T", data)
+	if err != nil {
+		ctrl.InternalError(err)
+	}
 }
 
 func (ctrl *Controller) InternalError(err error) {

@@ -33,6 +33,10 @@ func (ctrl *HomeCtrl) GetArticle(id string) {
 	ctrl.Text(id)
 }
 
+func (ctrl *HomeCtrl) Index() {
+	ctrl.View("home", "desc")
+}
+
 func createApp() *Application {
 	app := Application{}
 
@@ -46,6 +50,12 @@ func createApp() *Application {
 		HomeCtrl := HomeCtrl{}
 		HomeCtrl.Init(ctx)
 		HomeCtrl.GetArticle(ctx.Params["id"])
+	})
+
+	app.Get("/view", func(ctx Context) {
+		HomeCtrl := HomeCtrl{}
+		HomeCtrl.Init(ctx)
+		HomeCtrl.Index()
 	})
 
 	return &app
@@ -72,4 +82,13 @@ func Test_App_Params(t *testing.T) {
 	app.ServeHTTP(res, req)
 	expect(t, res.Code, 200)
 	expect(t, res.Body.String(), "123")
+}
+
+func Test_App_View(t *testing.T) {
+	app := createApp()
+
+	req, res := createReqRes("GET", "/view")
+	app.ServeHTTP(res, req)
+	expect(t, res.Code, 200)
+	expect(t, res.Body.String(), "<h1>hello</h1><p>desc</p>")
 }
