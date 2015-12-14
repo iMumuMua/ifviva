@@ -19,9 +19,9 @@ func (app *Application) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		}
 	}(rw)
 
-	handler, err := app.Match(r.URL.Path)
-	if err == nil {
-		handler(Context{r, rw})
+	isMatch, handler, params := app.Match(r.Method, r.URL.Path)
+	if isMatch == true {
+		handler(Context{r, rw, params})
 	} else {
 		rw.WriteHeader(404)
 		rw.Write([]byte("Not Found."))

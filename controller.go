@@ -15,6 +15,7 @@ const (
 type Controller struct {
 	Req        *http.Request
 	Res        http.ResponseWriter
+	Params     map[string]string
 	statusCode int
 	err        error
 	Charset    string
@@ -23,6 +24,7 @@ type Controller struct {
 func (ctrl *Controller) Init(ctx Context) {
 	ctrl.Req = ctx.Req
 	ctrl.Res = ctx.Res
+	ctrl.Params = ctx.Params
 	ctrl.statusCode = 200
 	ctrl.Charset = defaultCharset
 }

@@ -29,6 +29,10 @@ func (ctrl *HomeCtrl) Home() {
 	ctrl.Text("ok")
 }
 
+func (ctrl *HomeCtrl) GetArticle(id string) {
+	ctrl.Text(id)
+}
+
 func createApp() *Application {
 	app := Application{}
 
@@ -36,6 +40,12 @@ func createApp() *Application {
 		homeCtrl := HomeCtrl{}
 		homeCtrl.Init(ctx)
 		homeCtrl.Home()
+	})
+
+	app.Get("/articles/:id", func(ctx Context) {
+		HomeCtrl := HomeCtrl{}
+		HomeCtrl.Init(ctx)
+		HomeCtrl.GetArticle(ctx.Params["id"])
 	})
 
 	return &app
@@ -53,4 +63,13 @@ func Test_App_Base(t *testing.T) {
 	app.ServeHTTP(res, req)
 	expect(t, res.Code, 200)
 	expect(t, res.Body.String(), "ok")
+}
+
+func Test_App_Params(t *testing.T) {
+	app := createApp()
+
+	req, res := createReqRes("GET", "/articles/123")
+	app.ServeHTTP(res, req)
+	expect(t, res.Code, 200)
+	expect(t, res.Body.String(), "123")
 }
