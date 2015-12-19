@@ -1,10 +1,8 @@
 package ifviva
 
 import (
-	// "errors"
 	"log"
 	"net/http"
-	// "strings"
 )
 
 type Application struct {
@@ -29,6 +27,5 @@ func (app *Application) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) Run(port string) {
-	log.Println("Ifviva Application listen on", port)
-	log.Fatal(http.ListenAndServe(":"+port, app))
+	log.Fatal(http.ListenAndServe(port, app))
 }

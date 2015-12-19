@@ -58,12 +58,16 @@ func createApp() *Application {
 		HomeCtrl.Index()
 	})
 
+	app.Get("/panic", func(ctx Context) {
+		panic("ah~")
+	})
+
 	return &app
 }
 
 func Test_App_Run(t *testing.T) {
 	app := Application{}
-	go app.Run("3000")
+	go app.Run(":3000")
 }
 
 func Test_App_Base(t *testing.T) {
@@ -91,4 +95,13 @@ func Test_App_View(t *testing.T) {
 	app.ServeHTTP(res, req)
 	expect(t, res.Code, 200)
 	expect(t, res.Body.String(), "<h1>hello</h1><p>desc</p>")
+}
+
+func Test_App_Panic(t *testing.T) {
+	app := createApp()
+
+	req, res := createReqRes("GET", "/panic")
+	app.ServeHTTP(res, req)
+	expect(t, res.Code, 500)
+	expect(t, res.Body.String(), "Internal Server Error.")
 }
