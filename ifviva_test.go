@@ -1,7 +1,6 @@
 package ifviva
 
 import (
-	// "errors"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -34,7 +33,7 @@ func (ctrl *HomeCtrl) GetArticle(id string) {
 }
 
 func (ctrl *HomeCtrl) Index() {
-	ctrl.View("home", "desc")
+	ctrl.View("/Users/cahavar/go/src/ifviva/templates/index.html", "desc")
 }
 
 func createApp() *Application {
@@ -94,7 +93,19 @@ func Test_App_View(t *testing.T) {
 	req, res := createReqRes("GET", "/view")
 	app.ServeHTTP(res, req)
 	expect(t, res.Code, 200)
-	expect(t, res.Body.String(), "<h1>hello</h1><p>desc</p>")
+	expectTpl := `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test</title>
+</head>
+<body>
+    <h1>hello, world!</h1>
+    <p>desc</p>
+</body>
+</html>
+`
+	expect(t, res.Body.String(), expectTpl)
 }
 
 func Test_App_Panic(t *testing.T) {

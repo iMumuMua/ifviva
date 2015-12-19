@@ -53,9 +53,7 @@ func (ctrl *Controller) Json(v interface{}) {
 }
 
 func (ctrl *Controller) View(viewPath string, data interface{}) {
-	// readfile(viewPath)
-	tpl := `{{define "T"}}<h1>hello</h1><p>{{.}}</p>{{end}}`
-	t, err := template.New(viewPath).Parse(tpl)
+	t, err := template.ParseFiles(viewPath)
 	if err != nil {
 		ctrl.InternalError(err)
 		return
@@ -63,7 +61,7 @@ func (ctrl *Controller) View(viewPath string, data interface{}) {
 
 	ctrl.Res.Header().Set(contentType, appendCharset(contentHTML, ctrl.Charset))
 	ctrl.Res.WriteHeader(ctrl.statusCode)
-	err = t.ExecuteTemplate(ctrl.Res, "T", data)
+	err = t.ExecuteTemplate(ctrl.Res, "main", data)
 	if err != nil {
 		ctrl.InternalError(err)
 	}
