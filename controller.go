@@ -19,7 +19,7 @@ type Controller struct {
 	Res        http.ResponseWriter
 	Params     map[string]string
 	statusCode int
-	err        error
+	Err        error
 	Charset    string
 }
 
@@ -73,7 +73,7 @@ func (ctrl *Controller) View(views map[string]string, data interface{}) {
 }
 
 func (ctrl *Controller) InternalError(err error) {
-	ctrl.err = err
+	ctrl.Err = err
 	ctrl.Res.WriteHeader(500)
 	ctrl.Res.Write([]byte("Internal Server Error"))
 }

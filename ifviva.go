@@ -12,6 +12,7 @@ type Application struct {
 func (app *Application) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	defer func(rw http.ResponseWriter) {
 		if r := recover(); r != nil {
+			log.Println(r)
 			rw.WriteHeader(500)
 			rw.Write([]byte("Internal Server Error."))
 		}
