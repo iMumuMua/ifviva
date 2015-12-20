@@ -39,6 +39,10 @@ func (ctrl *HomeCtrl) Index() {
 	}, "desc")
 }
 
+func (ctrl *HomeCtrl) Static() {
+	ctrl.Text("static")
+}
+
 func createApp() *Application {
 	app := Application{}
 
@@ -62,6 +66,12 @@ func createApp() *Application {
 
 	app.Get("/panic", func(ctx Context) {
 		panic("ah~")
+	})
+
+	app.Get("/static/**", func(ctx Context) {
+		HomeCtrl := HomeCtrl{}
+		HomeCtrl.Init(ctx)
+		HomeCtrl.Static()
 	})
 
 	return &app
@@ -119,4 +129,13 @@ func Test_App_Panic(t *testing.T) {
 	app.ServeHTTP(res, req)
 	expect(t, res.Code, 500)
 	expect(t, res.Body.String(), "Internal Server Error.")
+}
+
+func Test_App_Dir(t *testing.T) {
+	app := createApp()
+
+	req, res := createReqRes("GET", "/static/test/main.js")
+	app.ServeHTTP(res, req)
+	expect(t, res.Code, 200)
+	expect(t, res.Body.String(), "static")
 }

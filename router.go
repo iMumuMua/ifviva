@@ -52,6 +52,12 @@ func (r *Router) addRoute(method string, url string, handler Handler) {
 	pattern := reg.ReplaceAllStringFunc(url, func(m string) string {
 		return fmt.Sprintf(`(?P<%s>[^/#?]+)`, m[1:])
 	})
+	regDir := regexp.MustCompile(`\*\*`)
+	var index int
+	pattern = regDir.ReplaceAllStringFunc(pattern, func(m string) string {
+		index++
+		return fmt.Sprintf(`(?P<_%d>[^#?]*)`, index)
+	})
 	pattern += `\/?`
 	route := route{
 		method:  method,
