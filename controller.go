@@ -52,8 +52,12 @@ func (ctrl *Controller) Json(v interface{}) {
 	ctrl.Res.Write(result)
 }
 
-func (ctrl *Controller) View(viewPath string, data interface{}) {
-	t, err := template.ParseFiles(viewPath)
+func (ctrl *Controller) View(views map[string]string, data interface{}) {
+	viewPaths := []string{}
+	for _, viewPath := range views {
+		viewPaths = append(viewPaths, viewPath)
+	}
+	t, err := template.ParseFiles(viewPaths...)
 	if err != nil {
 		ctrl.InternalError(err)
 		return
@@ -64,6 +68,7 @@ func (ctrl *Controller) View(viewPath string, data interface{}) {
 	err = t.ExecuteTemplate(ctrl.Res, "main", data)
 	if err != nil {
 		ctrl.InternalError(err)
+		return
 	}
 }
 

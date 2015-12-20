@@ -33,7 +33,10 @@ func (ctrl *HomeCtrl) GetArticle(id string) {
 }
 
 func (ctrl *HomeCtrl) Index() {
-	ctrl.View("/Users/cahavar/go/src/ifviva/templates/index.html", "desc")
+	ctrl.View(map[string]string{
+		"main":   "./templates/index.html",
+		"header": "./templates/header.html",
+	}, "desc")
 }
 
 func createApp() *Application {
@@ -100,6 +103,7 @@ func Test_App_View(t *testing.T) {
     <title>test</title>
 </head>
 <body>
+    <header>header</header>
     <h1>hello, world!</h1>
     <p>desc</p>
 </body>
