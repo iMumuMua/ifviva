@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+func init() {
+	SetViewPath("./templates")
+}
+
 func expect(t *testing.T, actual interface{}, expect interface{}) {
 	if actual != expect {
 		t.Errorf("expect: %v (type: %v) but got: %v (type: %v)\n", expect, reflect.TypeOf(expect), actual, reflect.TypeOf(actual))
@@ -33,10 +37,7 @@ func (ctrl *HomeCtrl) GetArticle(id string) {
 }
 
 func (ctrl *HomeCtrl) Index() {
-	ctrl.View(map[string]string{
-		"main":   "./templates/index.html",
-		"header": "./templates/header.html",
-	}, "desc")
+	ctrl.View("main", "desc")
 }
 
 func (ctrl *HomeCtrl) Static() {
