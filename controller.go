@@ -18,7 +18,9 @@ const (
 )
 
 var (
+	isCache       bool = true
 	cacheTemplate *template.Template
+	viewDir       string
 )
 
 type Controller struct {
@@ -31,8 +33,21 @@ type Controller struct {
 }
 
 func SetViewPath(dir string) {
+	viewDir = dir
+	setCacheTemplate()
+}
+
+func OpenViewCache() {
+	isCache = true
+}
+
+func CloseViewCache() {
+	isCache = false
+}
+
+func setCacheTemplate() {
 	viewPaths := []string{}
-	scanDir(dir, func(viewPath string) {
+	scanDir(viewDir, func(viewPath string) {
 		viewPaths = append(viewPaths, viewPath)
 	})
 	var err error
@@ -87,6 +102,10 @@ func (ctrl *Controller) Json(v interface{}) {
 }
 
 func (ctrl *Controller) View(name string, data interface{}) {
+	if isCache != true {
+		setCacheTemplate()
+	}
+
 	ctrl.Res.Header().Set(contentType, appendCharset(contentHTML, ctrl.Charset))
 	ctrl.Res.WriteHeader(ctrl.statusCode)
 	err := cacheTemplate.ExecuteTemplate(ctrl.Res, name, data)
