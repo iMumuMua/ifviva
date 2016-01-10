@@ -1,7 +1,5 @@
 # ifviva
-Golang Web Framework For http://www.ifviva.com
-
-该框架正在开发中，尚未正式投入使用。
+我的博客网站[天时](http://www.ifviva.com)的框架，目前还处于不断开发完善中，API可能会变动。
 
 # 快速开始
 app.go:
