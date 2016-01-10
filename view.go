@@ -73,7 +73,8 @@ func setViewPaths() {
 
 func setViewFuncs() {
 	viewFuncs := template.FuncMap{
-		"css": css,
+		"css": includeCSS,
+		"js":  includeJS,
 	}
 	for name, method := range viewConfig.Funcs {
 		viewFuncs[name] = method
@@ -105,7 +106,7 @@ func scanDir(dir string, fn func(string)) {
 }
 
 // view methods
-func css(filePath string) template.CSS {
+func includeCSS(filePath string) template.CSS {
 	abPath := path.Join(viewConfig.CSSDir, filePath)
 	content, err := ioutil.ReadFile(abPath)
 	if err != nil {
@@ -113,5 +114,16 @@ func css(filePath string) template.CSS {
 		return template.CSS("")
 	} else {
 		return template.CSS(content)
+	}
+}
+
+func includeJS(filePath string) template.JS {
+	abPath := path.Join(viewConfig.JSDir, filePath)
+	content, err := ioutil.ReadFile(abPath)
+	if err != nil {
+		log.Println("[ifviva.view]View method {js} error: ", err)
+		return template.JS("")
+	} else {
+		return template.JS(content)
 	}
 }
