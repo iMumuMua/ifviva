@@ -8,7 +8,9 @@ import (
 )
 
 func init() {
-	SetViewPath("./templates")
+	InitViewRenderer(ViewConfig{
+		ViewDir: "./templates",
+	})
 }
 
 func expect(t *testing.T, actual interface{}, expect interface{}) {

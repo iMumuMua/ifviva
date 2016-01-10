@@ -2,11 +2,7 @@ package ifviva
 
 import (
 	"encoding/json"
-	"html/template"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"path"
 )
 
 const (
@@ -17,12 +13,6 @@ const (
 	defaultCharset = "UTF-8"
 )
 
-var (
-	isCache       bool = true
-	cacheTemplate *template.Template
-	viewDir       string
-)
-
 type Controller struct {
 	Req        *http.Request
 	Res        http.ResponseWriter
@@ -30,46 +20,6 @@ type Controller struct {
 	statusCode int
 	Err        error
 	Charset    string
-}
-
-func SetViewPath(dir string) {
-	viewDir = dir
-	setCacheTemplate()
-}
-
-func OpenViewCache() {
-	isCache = true
-}
-
-func CloseViewCache() {
-	isCache = false
-}
-
-func setCacheTemplate() {
-	viewPaths := []string{}
-	scanDir(viewDir, func(viewPath string) {
-		viewPaths = append(viewPaths, viewPath)
-	})
-	var err error
-	cacheTemplate, err = template.ParseFiles(viewPaths...)
-	if err != nil {
-		log.Println("[ifviva]Set view path error: ", err)
-	}
-}
-
-func scanDir(dir string, fn func(string)) {
-	fileInfos, err := ioutil.ReadDir(dir)
-	if err != nil {
-		log.Println("[ifviva]Set view path error: ", err)
-		return
-	}
-	for _, fileInfo := range fileInfos {
-		if fileInfo.IsDir() {
-			scanDir(path.Join(dir, fileInfo.Name()), fn)
-		} else {
-			fn(path.Join(dir, fileInfo.Name()))
-		}
-	}
 }
 
 func (ctrl *Controller) Init(ctx Context) {
@@ -102,13 +52,9 @@ func (ctrl *Controller) Json(v interface{}) {
 }
 
 func (ctrl *Controller) View(name string, data interface{}) {
-	if isCache != true {
-		setCacheTemplate()
-	}
-
 	ctrl.Res.Header().Set(contentType, appendCharset(contentHTML, ctrl.Charset))
 	ctrl.Res.WriteHeader(ctrl.statusCode)
-	err := cacheTemplate.ExecuteTemplate(ctrl.Res, name, data)
+	err := render(ctrl.Res, name, data)
 	if err != nil {
 		ctrl.InternalError(err)
 		return
